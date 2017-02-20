@@ -11,13 +11,12 @@ private:
 	std::thread							m_thread;
 	std::queue<std::unique_ptr<LogMsg>> m_msgQueue;
 	std::mutex							m_addMutex;
-	std::condition_variable				m_printCV;
+	std::condition_variable						m_printCV;
 	std::mutex							m_printMutex;
-	int									m_part = 0;
 	LOG_LEVEL							m_level = lFull;
 	static int							threadFunc(FileLogger*);
 protected:
-	tostringstream						m_oss;
+	tostringstream							m_oss;
 
 	bool								m_init = false;
 	bool								m_stop = false;
