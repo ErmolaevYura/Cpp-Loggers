@@ -4,27 +4,27 @@
 
 inline void FileLogger::checkFile(const std::tm* checkTime)
 {
-	bool needNewFile = false;
-	if (std::experimental::filesystem::file_size(GetFileName().c_str()) >= 100000)
-	{
-		m_part++;
-		if (m_ofstream.is_open()) m_ofstream.close();
-		needNewFile = true;
-	}
+	static bool needNewFile = false;
+
 	if (m_timeName.tm_year != checkTime->tm_year && m_timeName.tm_mon != checkTime->tm_mon && m_timeName.tm_mday != checkTime->tm_mday)
 	{
-		m_part = 0;
 		m_timeName = std::tm(*checkTime);
 		if (m_ofstream.is_open()) m_ofstream.close();
 		needNewFile = true;
 	}
-	if(needNewFile) m_ofstream.open(GetFileName(), std::ios_base::out | std::ios_base::app);
+	if(needNewFile) 
+	{
+		tstring fileName = GetFileName();
+		m_ofstream.open(fileName, std::ios_base::out | std::ios_base::app);
+		needNewFile = false;
+	}
 }
 inline void FileLogger::write(std::unique_ptr<LogMsg> msg)
 {
 	std::unique_ptr<std::tm> time;
 	TCHAR str_time[21];
 #if _WIN32 || _WIN64
+	time = std::make_unique<std::tm>();
 	localtime_s(time.get(), &msg->time);
 #else
 	time = std::make_unique<std::tm>(std::localtime(&msg->time));
@@ -82,8 +82,15 @@ start:
 	return result;
 }
 FileLogger::FileLogger(tstring prefix, tstring path)
-	: m_prefix(prefix), m_path(path)	
+	: m_prefix(prefix), m_path(path)
 {
+	std::time_t time;
+	std::time(&time);
+#ifdef _WIN32 || _WIN64
+	localtime_s(&m_timeName, &time);
+#else
+	std::localtime(&m_timeName)
+#endif
 	std::experimental::filesystem::create_directory(path.c_str());
 }
 FileLogger::~FileLogger() { UninitThread(); }
@@ -109,9 +116,9 @@ void FileLogger::SetLevel(LOG_LEVEL level)
 }
 tstring FileLogger::GetFileName()
 {
-	TCHAR str_time;
-	tstrftime(&str_time, sizeof(str_time), _T("%Y.%m.%d"), &m_timeName);
-	return m_path + m_prefix + _T("_") + str_time + (m_part == 0 ? _T("") : to_tstring(m_part)) + _T(".log");
+	TCHAR str_time[11];
+	tstrftime(str_time, sizeof(str_time), _T("%Y.%m.%d"), &m_timeName);
+	return m_path + m_prefix + _T("_") + str_time + _T(".log");
 }
 void FileLogger::InitThread()
 {
