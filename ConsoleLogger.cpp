@@ -28,7 +28,8 @@ inline void ConsoleLogger::print(std::unique_ptr<LogMsg> msg)
 		case lDebug: SetConsoleTextAttribute(console, FOREGROUND_BLUE); break;
 		case lTrace: SetConsoleTextAttribute(console, FOREGROUND_INTENSITY); break;
 		default: SetConsoleTextAttribute(console, FOREGROUND_INTENSITY); break;
-	}
+	}	
+	time = std::make_unique<std::tm>();
 	localtime_s(time.get(), &msg->time);
 #else
 	time = std::make_unique<std::tm>(std::localtime(&msg->time));
