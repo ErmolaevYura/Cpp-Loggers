@@ -133,7 +133,7 @@ void FileLogger::UninitThread()
 	if (!m_init) return;
 	m_init = false;
 	m_stop = true;
-	if (!m_msgQueue.empty()) m_printCV.notify_one();
+	m_printCV.notify_one();
 	m_thread.join();
 }
 bool FileLogger::AddMsg(const tstring &msg, LOG_LEVEL level)
