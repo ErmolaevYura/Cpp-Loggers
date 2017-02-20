@@ -156,5 +156,4 @@ void FileLogger::Interrupt()
 	m_init = false;
 	m_interrupt = true;
 	m_printCV.notify_one();
-	ConsoleLogger::AddInfo(_T("Interrupt FileLogger for {0}"), GetFileName());
 }
