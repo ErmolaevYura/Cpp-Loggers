@@ -92,7 +92,7 @@ void ConsoleLogger::UninitThread()
 	m_init = false;
 	m_stop = true;
 #ifdef CONSOLE_LOGGER
-	if (!m_msgQueue.empty()) m_printCV.notify_one();
+	m_printCV.notify_one();
 	m_thread.join();
 #endif // CONSOLE_LOGGER
 }
