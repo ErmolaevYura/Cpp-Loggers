@@ -4,7 +4,7 @@
 
 inline void FileLogger::checkFile(const std::tm* checkTime)
 {
-	static bool needNewFile = false;
+	static bool needNewFile = true;
 
 	if (m_timeName.tm_year != checkTime->tm_year && m_timeName.tm_mon != checkTime->tm_mon && m_timeName.tm_mday != checkTime->tm_mday)
 	{
