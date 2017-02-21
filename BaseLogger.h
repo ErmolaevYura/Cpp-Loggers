@@ -6,7 +6,7 @@
 #include <memory>
 #include <mutex>
 #include <queue>
-#include "../tstring.h"
+#include "tstring.h"
 
 enum LOG_LEVEL {
 	lError = 1,
@@ -33,9 +33,13 @@ struct LogMsg
 		static void next(tstring& str, std::tuple<Args...> &t)
 		{
 			iterator_tuple<index - 1, Args...>::next(str, t);
-			size_t pos = str.find(_T("{") + to_tstring(index) + _T("}"));
-			if (pos != tstring::npos)
-				str.replace(pos, 3, std::get<index>(t));
+			size_t pos = str.find(_T("{") + to_tstring(index) + _T("}"));	
+			if (pos != tstring::npos)	
+			{		
+				tostringstream os; 
+				os << std::get<index>(t);
+				str.replace(pos, 3, os.str())
+			}
 		}
 	};
 	template<typename... Args>
@@ -45,7 +49,11 @@ struct LogMsg
 		{
 			size_t pos = str.find(_T("{0}"));
 			if (pos != tstring::npos)
-				str.replace(pos, 3, std::get<0>(t));
+			{				
+				tostringstream os; 
+				os << std::get<0>(t);
+				str.replace(pos, 3, os.str());
+			}
 		}
 	};
 	template<typename... Args>
