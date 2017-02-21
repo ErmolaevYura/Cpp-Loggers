@@ -57,11 +57,11 @@ public:
 
 	template<typename T> FileLogger& operator<<(const T& arg) { m_oss << arg; return *this; }
 	FileLogger& log(LOG_LEVEL = lTrace);
-	inline FileLogger& error() { log(lError); }
-	inline FileLogger& info() { log(lInfo); }
-	inline FileLogger& warning() { log(lWarning); }
-	inline FileLogger& debug() { log(lDebug); }
-	inline FileLogger& trace() { log(lTrace); }
+	inline FileLogger& error() { log(lError); return *this; }
+	inline FileLogger& info() { log(lInfo); return *this; }
+	inline FileLogger& warning() { log(lWarning); return *this; }
+	inline FileLogger& debug() { log(lDebug); return *this; }
+	inline FileLogger& trace() { log(lTrace); return *this; }
 
 	bool AddMsg(const tstring &msg, LOG_LEVEL level = lTrace);
 	void InitThread();
